@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace TranslationTable
@@ -6,35 +7,34 @@ namespace TranslationTable
 
     public class ReadOnlyException : System.MemberAccessException { }
 
-    public interface ISimpleStringTranslationTable{
-        string this[string key] { get; set; }
-        StringDictionary ToStringDictionary();
-        ISimpleStringTranslationTable Add(string key, string value);
+    public interface ISimpleTranslationTable<T>{
+        T this[T key] { get; set; }
+        Dictionary<T, T> ToDictionary();
+        ISimpleTranslationTable<T> Add(T key, T value);
     }
 
-    public class ReadonlySimpleStringTranslationTable : SimpleStringTranslationTable, ISimpleStringTranslationTable {
-        public ReadonlySimpleStringTranslationTable(ISimpleStringTranslationTable initData = null) : base(initData) {
+    public class ReadonlySimpleTranslationTable : ReadonlySimpleTranslationTable<string>, ISimpleTranslationTable<string> {
+        public ReadonlySimpleTranslationTable(ISimpleTranslationTable<string> initData = null) : base(initData) { }
+    }
+    public class ReadonlySimpleTranslationTable<T> : SimpleTranslationTable<T>, ISimpleTranslationTable<T> {
+        public ReadonlySimpleTranslationTable(ISimpleTranslationTable<T> initData = null) : base(initData) {
             seal();
         }
 
-        public new StringDictionary ToStringDictionary() {
-            var dict = base.ToStringDictionary();
-            var rval = new StringDictionary();
-            foreach(DictionaryEntry entry in base.ToStringDictionary()) {
-                rval.Add((string)entry.Key, (string)entry.Value);
-            }
-            return rval;
+        public new Dictionary<T, T> ToDictionary() {
+            return new Dictionary<T, T>(base.ToDictionary());
         }
     }
 
-    public class SimpleStringTranslationTable : ISimpleStringTranslationTable
+    public class SimpleTranslationTable : SimpleTranslationTable<string>, ISimpleTranslationTable<string> { }
+    public class SimpleTranslationTable<T> : ISimpleTranslationTable<T>
     {
-        private StringDictionary stringDict;
+        private Dictionary<T, T> dict;
         private bool isSealed = false;
         private readonly object mutex = new object();
-        private void init(StringDictionary initData) {
+        private void init(Dictionary<T, T> initData) {
             lock(mutex) {
-                stringDict = initData ?? new StringDictionary();
+                dict = initData ?? new Dictionary<T, T>();
             }
         }
 
@@ -42,37 +42,40 @@ namespace TranslationTable
             lock(mutex) { isSealed = true; }
         }
 
-        public SimpleStringTranslationTable(StringDictionary initData) {
+        public SimpleTranslationTable(Dictionary<T, T> initData) {
             init(initData);
         }
-        public SimpleStringTranslationTable(ISimpleStringTranslationTable initData = null) {
-            init(initData == null ? null : initData.ToStringDictionary());
+        public SimpleTranslationTable(ISimpleTranslationTable<T> initData = null) {
+            init(initData == null ? null : initData.ToDictionary());
         }
 
-        public bool KeyAvailable(string key) {
-            return null == this[key,null];
+        public bool ContainsKey(T key) {
+            lock(mutex) {
+                return dict.ContainsKey(key);
+            }
         }
-        public ISimpleStringTranslationTable Add(string key, string value) {
+        public ISimpleTranslationTable<T> Add(T key, T value) {
             this[key]=value;
             return this;
         }
 
-
-        public StringDictionary ToStringDictionary() {
-            lock(mutex) { return stringDict; }
+        public Dictionary<T, T> ToDictionary() {
+            lock(mutex) { return dict; }
         }
-        public string this[string key] {
+        public T this[T key] {
             get { return this[key, key]; }
-            set { this[key, null]=value; }
+            set { this[key, key]=value; }
         }
-        public string this[string key, string defaultValue]{
+        public T this[T key, T defaultValue]{
             get{
-                lock(mutex) { return stringDict[key] ?? defaultValue; }
+                lock(mutex) {
+                    return dict.ContainsKey(key) ? dict[key] : defaultValue;
+                }
             }
             set { lock(mutex) {
                     if(isSealed) throw new ReadOnlyException();
-                    if(stringDict[key] != null) stringDict.Remove(key);
-                    if(value != null) { stringDict.Add(key, value); } 
+                    if(dict.ContainsKey(key)) dict.Remove(key);
+                    if(value != null) { dict.Add(key, value); } 
             }}
         }
     }
