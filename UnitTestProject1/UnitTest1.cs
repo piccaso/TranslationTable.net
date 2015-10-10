@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using TranslationTable;
 
 namespace UnitTestProject1 {
@@ -68,6 +70,8 @@ namespace UnitTestProject1 {
             }
             public override int GetHashCode() { return this; }
             public override bool Equals(object obj) { return ((string)this) == ((CompareMeByToString)obj); }
+            public static bool operator ==(CompareMeByToString left, CompareMeByToString right) { return (string)left == (string)right; }
+            public static bool operator !=(CompareMeByToString left, CompareMeByToString right) { return (string)left != (string)right; }
         }
 
         public class myClass : CompareMeByToString {
@@ -98,6 +102,26 @@ namespace UnitTestProject1 {
             i=new myClass { name="noname", age=-1 };
             Assert.IsTrue("noname, -1" == u);
             Assert.IsTrue(u == i);
+        }
+
+        [TestMethod]
+        public void parallel() {
+            Parallel.For(10, 100, (i) => threads(i));
+        }
+        public void threads(int iterations) {
+            var tt = new SimpleTranslationTable<myClass>();
+            var ro = new ReadonlySimpleTranslationTable<myClass>(tt);
+            Parallel.For(1, iterations, (i) => {
+                tt[new myClass { age=i }]=new myClass { age=i*2 };
+            });
+
+            Assert.IsTrue(tt.ToDictionary().Count() == iterations-1);
+
+            Parallel.For(1, iterations, (i) => {
+                Assert.IsTrue(ro[new myClass { age=i }] == new myClass { age=i*2 });
+                Assert.IsFalse(ro[new myClass { age=i }] != new myClass { age=i*2 });
+            });
+
         }
     }
 }
