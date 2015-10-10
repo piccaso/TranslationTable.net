@@ -1,11 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
-using TranslationTable;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Linq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Linq;
+using TranslationTable;
 
 namespace UnitTestProject1 {
     [TestClass]
@@ -61,6 +57,47 @@ namespace UnitTestProject1 {
             Assert.IsTrue(ro["blah", null]==null);
             Assert.IsTrue(rox["blah", null]=="blx");
 
+        }
+
+        public class CompareMeByToString {
+            public static implicit operator string(CompareMeByToString t) {
+                return t.ToString();
+            }
+            public static implicit operator int(CompareMeByToString t) {
+                return ((string)t).Sum(o => (int)o);
+            }
+            public override int GetHashCode() { return this; }
+            public override bool Equals(object obj) { return ((string)this) == ((CompareMeByToString)obj); }
+        }
+
+        public class myClass : CompareMeByToString {
+            public string name { get; set; }
+            public int age { get; set; }
+            public override string ToString() {
+                return (name ?? "?") + ", " + age.ToString();
+            }
+        }
+
+        [TestMethod]
+        public void complexType() {
+            var tt = new SimpleTranslationTable<myClass>();
+            var ro = new ReadonlySimpleTranslationTable<myClass>(tt);
+            tt.Add(
+                new myClass{ name="left", age=1 },
+                new myClass{ name="right", age=2 }
+            ).Add(
+                new myClass(),
+                new myClass{ name="noname", age=-1 }
+            );
+            var r = tt[new myClass { name="left", age=1 }];
+            int i = new myClass { name="right", age=2 };
+            Assert.IsTrue(r == "right, 2");
+            Assert.IsTrue(r == i);
+
+            var u = tt[new myClass()];
+            i=new myClass { name="noname", age=-1 };
+            Assert.IsTrue("noname, -1" == u);
+            Assert.IsTrue(u == i);
         }
     }
 }

@@ -67,11 +67,9 @@ namespace TranslationTable
             set { this[key, key]=value; }
         }
         public T this[T key, T defaultValue]{
-            get{
-                lock(mutex) {
+            get{ lock(mutex) {
                     return dict.ContainsKey(key) ? dict[key] : defaultValue;
-                }
-            }
+            }}
             set { lock(mutex) {
                     if(isSealed) throw new ReadOnlyException();
                     if(dict.ContainsKey(key)) dict.Remove(key);
