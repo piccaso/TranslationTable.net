@@ -6,11 +6,13 @@ namespace TranslationTable
 {
 
     public class ReadOnlyException : System.MemberAccessException { }
+    public class InvalidNumberOfArgumentsException : System.ArgumentException { }
 
     public interface ISimpleTranslationTable<T>{
         T this[T key] { get; set; }
         Dictionary<T, T> ToDictionary();
         ISimpleTranslationTable<T> Add(T key, T value);
+        ISimpleTranslationTable<T> A(params T[] kv);
     }
 
     public class ReadonlySimpleTranslationTable : ReadonlySimpleTranslationTable<string>, ISimpleTranslationTable<string> {
@@ -56,6 +58,19 @@ namespace TranslationTable
         }
         public ISimpleTranslationTable<T> Add(T key, T value) {
             this[key]=value;
+            return this;
+        }
+
+        public ISimpleTranslationTable<T> A(params T[] kv) {
+            if(kv == null || kv.Length < 2 || kv.Length % 2 != 0) throw new InvalidNumberOfArgumentsException();
+            T key=default(T);
+            for(int i = 0; i < kv.Length; i++) {
+                if(i % 2 == 0) {
+                    key = kv[i];
+                } else {
+                    this[key]=kv[i];
+                }
+            }
             return this;
         }
 

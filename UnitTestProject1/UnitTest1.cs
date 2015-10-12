@@ -7,7 +7,45 @@ using TranslationTable;
 
 namespace UnitTestProject1 {
     [TestClass]
-    public class UnitTest1 {
+    public class UnitTest1 : VW.VW {
+
+        [TestMethod, ExpectedException(typeof(ReadOnlyException))]
+        public void testA() {
+            var tt = 
+                    new SimpleTranslationTable()
+                    .A("key", "value")
+            ;
+            Assert.IsTrue("value" == tt["key"]);
+            var ro = new ReadonlySimpleTranslationTable<string>(tt);
+            Assert.IsTrue("value" == ro["key"]);
+            ro.A("x", "y"); // throws
+            Assert.Fail();
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidNumberOfArgumentsException))]
+        public void testAnoValue() {
+            new SimpleTranslationTable().A("key");
+            Assert.Fail();
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidNumberOfArgumentsException))]
+        public void testAnoArgument() {
+            new SimpleTranslationTable().A();
+            Assert.Fail();
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidNumberOfArgumentsException))]
+        public void testAworngLength() {
+            new SimpleTranslationTable().A("k","v","k");
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void vw() {
+            if(isAgent) return;
+            Assert.Fail();
+        }
+
         [TestMethod]
         public void TestMethod1() {
             var tt = new SimpleTranslationTable();
@@ -61,26 +99,7 @@ namespace UnitTestProject1 {
 
         }
 
-        public class CompareMeByToString {
-            public static implicit operator string(CompareMeByToString t) {
-                return t.ToString();
-            }
-            public static implicit operator int(CompareMeByToString t) {
-                return ((string)t).Sum(o => (int)o);
-            }
-            public override int GetHashCode() { return this; }
-            public override bool Equals(object obj) { return ((string)this) == ((CompareMeByToString)obj); }
-            public static bool operator ==(CompareMeByToString left, CompareMeByToString right) { return (string)left == (string)right; }
-            public static bool operator !=(CompareMeByToString left, CompareMeByToString right) { return (string)left != (string)right; }
-        }
 
-        public class myClass : CompareMeByToString {
-            public string name { get; set; }
-            public int age { get; set; }
-            public override string ToString() {
-                return (name ?? "?") + ", " + age.ToString();
-            }
-        }
 
         [TestMethod]
         public void complexType() {
