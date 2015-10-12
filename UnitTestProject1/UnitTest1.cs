@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using TranslationTable;
 
 namespace UnitTestProject1 {
+    
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class UnitTest1 : VW.VW {
 

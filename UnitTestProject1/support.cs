@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace UnitTestProject1 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CompareMeByToString {
         public static implicit operator string(CompareMeByToString t) {
             return t.ToString();
@@ -29,6 +30,7 @@ namespace UnitTestProject1 {
 }
 
 namespace VW {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class VW {
         private static bool CheckEnv(params string[] EnvVars) {
             int found = 0;
