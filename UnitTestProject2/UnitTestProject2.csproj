@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="localdbsetup.bat" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SqlServerUnitTest1.resx">
