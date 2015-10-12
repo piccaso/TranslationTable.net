@@ -1,7 +1,7 @@
 set
-SqlLocalDB.exe p MSSQLLocalDB -i
-SqlLocalDB.exe h MSSQLLocalDB MSSQLLocalDB
-SqlLocalDB.exe s MSSQLLocalDB
-SqlLocalDB.exe i MSSQLLocalDB
-SQLCMD.EXE -S "(localdb)\.\MSSQLLocalDB" -Q "CREATE DATABASE TranslationTable;"
+SqlLocalDB.exe c TTLocalDB
+SqlLocalDB.exe h TTLocalDB TTLocalDB
+SqlLocalDB.exe s TTLocalDB
+SqlLocalDB.exe i TTLocalDB
+SQLCMD.EXE -S "(localdb)\.\TTLocalDB" -Q "CREATE DATABASE TranslationTable;"
 EXIT /B 0
