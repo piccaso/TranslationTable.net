@@ -92,8 +92,7 @@
     <SsdtUnitTestVersion>2.0</SsdtUnitTestVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>SqlLocalDB.exe s MSSQLLocalDB || true
-SQLCMD.EXE -S "(localdb)\MSSQLLocalDB" -Q "CREATE DATABASE TranslationTable;" || true</PostBuildEvent>
+    <PostBuildEvent>$(ProjectDir)/localdbsetup.bat</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
