@@ -100,6 +100,28 @@ namespace UnitTestProject1 {
         }
 
 
+        [TestMethod]
+        public void complexTypeA() {
+
+            var tt = 
+                new SimpleTranslationTable<myClass>()
+                .A(new myClass { name="key1", age=1 }, new myClass { name="value1", age=1 })
+                .A(new myClass { name="key1", age=1 }, new myClass { name="value1", age=1 })
+                .A(new myClass { name="key1", age=1 }, new myClass { name="value1", age=1 })
+                .A(new myClass { name="key1", age=1 }, new myClass { name="value1", age=1 })
+                .A(new myClass { name="key1", age=1 }, new myClass { name="value1", age=7 })
+            ;
+            Assert.IsTrue(tt[new myClass { name="key1", age=1 }] == new myClass { name="value1", age=7 });
+            Assert.IsTrue(tt[new myClass { name="key1", age=1 }] == "value1, 7");
+            Assert.IsTrue(tt.ToDictionary().Count == 1);
+            tt.ToDictionary().Add(new myClass { name="key2", age=2 }, new myClass { name="key2", age=2 });
+            Assert.IsTrue(tt[new myClass { name="key2", age=2 }] == "key2, 2");
+
+            var ro = new ReadonlySimpleTranslationTable<myClass>(tt);
+            ro.ToDictionary().Add(new myClass { name="key3", age=3 }, new myClass { name="value3", age=3 });
+            Assert.IsTrue(ro[new myClass { name="key3", age=3 }] == "key3, 3");
+
+        }
 
         [TestMethod]
         public void complexType() {
