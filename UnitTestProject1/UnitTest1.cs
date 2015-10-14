@@ -1,8 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Resources;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using TranslationTable;
 
 namespace UnitTestProject1 {
@@ -165,6 +169,57 @@ namespace UnitTestProject1 {
                 Assert.IsFalse(ro[new myClass { age=i }] != new myClass { age=i*2 });
             });
 
+        }
+
+
+	[XmlRoot(ElementName="d")]
+	public class D {
+		[XmlAttribute(AttributeName="key")]
+		public string Key { get; set; }
+		[XmlText]
+		public string Data { get; set; }
+	}
+
+	[XmlRoot(ElementName="translations")]
+	public class Translations {
+		[XmlElement(ElementName="d")]
+		public List<D> D { get; set; }
+	}
+
+
+
+
+        [TestMethod]
+        public void serializer() {
+
+            /*var x = new Translations();
+            x.D = new List<D>();
+            x.D.Add(new D { Key="k", Data="dDdD<" });
+            x.D.Add(new D { Key="k", Data="dDdD<" });
+            x.D.Add(new D { Key="k", Data="dDdD<" });
+
+
+            var s = new XmlSerializer(x.GetType());
+            TextWriter tw = new StreamWriter("fn.xml");
+            s.Serialize(tw, x);*/
+
+            //var sw = new StringWriter();
+            //s.Serialize(sw, x);
+            //Debug.WriteLine(sw.ToString());
+
+            XmlSerializer serializer = new XmlSerializer(typeof(Translations));
+            var x = (Translations)serializer.Deserialize(Assembly.LoadFrom("TranslationTable.dll").GetManifestResourceStream("TranslationTable.tt.xml"));
+            Debug.WriteLine(x.D.First().Data);
+
+            var dict = new Dictionary<string, string>();
+            //dict.Add("key1@", ">value1");
+            //dict.Add("Key2<", ">value2");
+            //var xml = dict.Serialize();
+
+            using(var sr = new StreamReader(Assembly.LoadFrom("UnitTestProject1.dll").GetManifestResourceStream("UnitTestProject1.res.xml"))) {
+                dict = sr.ReadToEnd().Deserialize<Dictionary<string, string>>();
+            }
+            Assert.IsTrue(dict.First().Key == "key1@");
         }
     }
 }

@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace UnitTestProject1 {
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]    
     public class CompareMeByToString {
         public static implicit operator string(CompareMeByToString t) {
             return t.ToString();
@@ -20,6 +21,7 @@ namespace UnitTestProject1 {
         public static bool operator !=(CompareMeByToString left, CompareMeByToString right) { return (string)left != (string)right; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class myClass : CompareMeByToString {
         public string name { get; set; }
         public int age { get; set; }

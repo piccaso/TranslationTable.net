@@ -1,0 +1,10 @@
+<ArrayOfKeyValueOfstringstring xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+  <KeyValueOfstringstring>
+    <Key>key1@</Key>
+    <Value>&gt;value1</Value>
+  </KeyValueOfstringstring>
+  <KeyValueOfstringstring>
+    <Key>Key2&lt;</Key>
+    <Value>&gt;value2</Value>
+  </KeyValueOfstringstring>
+</ArrayOfKeyValueOfstringstring>
