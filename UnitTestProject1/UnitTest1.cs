@@ -209,7 +209,7 @@ namespace UnitTestProject1 {
 
             XmlSerializer serializer = new XmlSerializer(typeof(Translations));
             var x = (Translations)serializer.Deserialize(Assembly.LoadFrom("TranslationTable.dll").GetManifestResourceStream("TranslationTable.tt.xml"));
-            Debug.WriteLine(x.D.First().Data);
+            Assert.IsTrue(x.D.First().Data == "dDdD<");
 
             var dict = new Dictionary<string, string>();
             //dict.Add("key1@", ">value1");
