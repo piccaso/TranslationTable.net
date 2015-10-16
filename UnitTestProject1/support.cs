@@ -42,7 +42,10 @@ namespace VW {
             return EnvVars.Length == found;
         }
         private static bool IsAgent() {
-            return CheckEnv("AGENT_ID", "TF_BUILD", "AGENT_NAME");
+            return
+                CheckEnv("AGENT_ID", "TF_BUILD", "AGENT_NAME") ||
+                CheckEnv("CI", "APPVEYOR") ||
+            false;
         }
         public bool isAgent { get { Assert.IsTrue(true); return _isAgent; } }
         private bool _isAgent { get; set; }
