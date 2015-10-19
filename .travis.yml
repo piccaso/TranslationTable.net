@@ -4,7 +4,6 @@ mono:
  - beta
  - weekly
  - latest
- - 3.12.1
  - 3.12.0
  - 3.10.0
  - 3.8.0
@@ -14,5 +13,6 @@ matrix:
  allow_failures:
   - mono: weekly
   - mono: alpha
+  - mono: 3.2.8
   - mono: 2.10.8
 solution: TranslationTable/TranslationTable.csproj
