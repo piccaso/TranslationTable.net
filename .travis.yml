@@ -15,4 +15,14 @@ matrix:
   - mono: alpha
   - mono: 3.2.8
   - mono: 2.10.8
-solution: TranslationTable/TranslationTable.csproj
+solution: TranslationTable.sln
+install:
+  - nuget restore TranslationTable.sln
+  - nuget install xunit.runners -Version 2.1.0 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Debug TranslationTable/TranslationTable.csproj
+  - xbuild /p:Configuration=Release TranslationTable/TranslationTable.csproj
+  - xbuild /p:Configuration=Debug xunit/xunit.csproj
+  - mono testrunner/xunit.runner.console.2.1.0/tools/xunit.console xunit/bin/Debug/xunit.dll
+  - xbuild /p:Configuration=Release xunit/xunit.csproj
+  - mono testrunner/xunit.runner.console.2.1.0/tools/xunit.console xunit/bin/Release/xunit.dll
